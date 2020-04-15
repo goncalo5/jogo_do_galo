@@ -37,6 +37,8 @@ class Game(Screen):
     mob = kp.StringProperty("")
     game_over = kp.BooleanProperty(False)
     who_is_first = kp.StringProperty("mob")
+    player_wins = kp.NumericProperty()
+    mob_wins = kp.NumericProperty()
 
     def __init__(self, **kwargs):
         super().__init__()
@@ -61,7 +63,7 @@ class Game(Screen):
             self.player = "circle"
             self.mob = "cross"
             new_coord = self.calc_next_mob_coord()
-            self.draw_symbol("cross", new_coord)
+            self.draw_symbol("mob", new_coord)
         print("self.player", self.player)
 
     def calc_lines(self):
@@ -134,8 +136,9 @@ class Game(Screen):
         if 0 <= coord_x < 3 and 0 <= coord_y < 3:
             return coord_x, coord_y
 
-    def draw_symbol(self, symbol, new_coord):
-        print("\ndraw_symbol(%s, %s)" % (symbol, new_coord))
+    def draw_symbol(self, who, new_coord):
+        print("\ndraw_symbol(%s, %s)" % (who, new_coord))
+        symbol = getattr(self, who)
 
         if symbol == "cross":
             coords = self.all_crosses
@@ -148,10 +151,14 @@ class Game(Screen):
             return True
         coords.append(new_coord)
         function()
-        if self.check_if_win(coords):
-            print("\n\n%s win\n\n\n" % symbol)
-            Factory.GameOverPopup(game=self, who_win=symbol).open()
+        if self.check_if_win_by_who(who):
+            print("\n\n%s WIN with %s\n\n\n" % (who, symbol))
+            Factory.GameOverPopup(game=self, who_win=who).open()
             self.game_over = True
+            if who == "player":
+                self.player_wins += 1
+            else:
+                self.mob_wins += 1
             return True
         return False
 
@@ -169,12 +176,12 @@ class Game(Screen):
         if not new_coord:
             return
         print("self.player", self.player)
-        if self.draw_symbol(self.player, new_coord):
+        if self.draw_symbol("player", new_coord):
             return
 
         # Mob:
         new_coord = self.calc_next_mob_coord()
-        self.draw_symbol(self.mob, new_coord)
+        self.draw_symbol("mob", new_coord)
 
     def calc_next_mob_coord(self):
         print("calc_next_mob_coord()")
@@ -190,8 +197,8 @@ class Game(Screen):
             print("choosed_coord", choosed_coord)
             return choosed_coord
 
-    def check_if_win(self, who):
-        print("check_if_win(%s)" % who)
+    def check_if_win_by_coords(self, coords):
+        print("check_if_win_by_coords(%s)" % coords)
         all_possible_wins = [
             [(0, 0), (1, 1), (2, 2)],
             [(2, 0), (1, 1), (0, 2)],
@@ -203,20 +210,28 @@ class Game(Screen):
             [(1, 0), (1, 1), (1, 2)],
             [(2, 0), (2, 1), (2, 2)]
         ]
-        if len(who) < 3:
+        if len(coords) < 3:
             return False
         for possible_win in all_possible_wins:
             # print("possible_win", possible_win)
             for possible_coord in possible_win:
                 # print("possible_coord", possible_coord)
-                # print(possible_coord not in who, possible_coord, who)
-                if possible_coord not in who:
+                # print(possible_coord not in coords, possible_coord, coords)
+                if possible_coord not in coords:
                     break
             else:
                 # print(possible_win)
                 return True
         return False
 
+    def check_if_win_by_who(self, who):
+        symbol = getattr(self, who)
+        map_symbol = {
+            "cross": "all_crosses",
+            "circle": "all_circles",
+        }
+        coords = getattr(self, map_symbol[symbol])
+        return self.check_if_win_by_coords(coords)
 
 class MetaGame(BoxLayout):
     pass

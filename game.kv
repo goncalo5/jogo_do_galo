@@ -2,9 +2,15 @@
 
 <MetaGame>:
     orientation: "vertical"
-    Button:
-        text: "New Game"
+    BoxLayout:
+        orientation: "horizontal"
         size_hint_y: 0.1
-        on_press: game.new_game()
+        Label:
+            text: "player: %s" % game.player_wins
+        Label:
+            text: "mob: %s" % game.mob_wins
+        Button:
+            text: "New Game"
+            on_press: game.new_game()
     Game:
         id: game

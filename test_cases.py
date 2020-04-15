@@ -66,28 +66,46 @@ class TestStringMethods(unittest.TestCase):
         game.all_circles = [(1, 1), (0, 2), (2, 1), (0, 0)]
         self.assertEqual(game.calc_next_mob_coord(), None)
 
-    def test_check_if_win(self):
-        print("\ntest_check_if_win")
+    def test_check_if_win_by_coords(self):
+        print("\ntest_check_if_win_by_coords")
         game = main.Game()
         game.all_crosses = [(0, 0), (1, 1), (2, 2)]
-        self.assertEqual(game.check_if_win(game.all_crosses), True)
+        self.assertEqual(game.check_if_win_by_coords(game.all_crosses), True)
         game.all_crosses = [(0, 0), (1, 1), (2, 2), (1, 0)]
-        self.assertEqual(game.check_if_win(game.all_crosses), True)
+        self.assertEqual(game.check_if_win_by_coords(game.all_crosses), True)
         game.all_crosses = [(0, 0), (1, 1)]
-        self.assertEqual(game.check_if_win(game.all_crosses), False)
+        self.assertEqual(game.check_if_win_by_coords(game.all_crosses), False)
         game.all_crosses = [(0, 0), (1, 0), (1, 1)]
-        self.assertEqual(game.check_if_win(game.all_crosses), False)
+        self.assertEqual(game.check_if_win_by_coords(game.all_crosses), False)
         game.all_crosses = [(0, 0), (1, 0), (1, 1), (2, 2)]
-        self.assertEqual(game.check_if_win(game.all_crosses), True)
+        self.assertEqual(game.check_if_win_by_coords(game.all_crosses), True)
         game.all_crosses = [(0, 0), (1, 0), (2, 0)]
-        self.assertEqual(game.check_if_win(game.all_crosses), True)
+        self.assertEqual(game.check_if_win_by_coords(game.all_crosses), True)
         game.all_crosses = [(0, 0), (2, 2), (1, 0), (2, 0)]
-        self.assertEqual(game.check_if_win(game.all_crosses), True)
+        self.assertEqual(game.check_if_win_by_coords(game.all_crosses), True)
         game.all_crosses = [(2, 0), (1, 2), (0, 2)]
-        self.assertEqual(game.check_if_win(game.all_crosses), False)
+        self.assertEqual(game.check_if_win_by_coords(game.all_crosses), False)
         game.all_circles = [(2, 0), (1, 2), (0, 2)]
-        self.assertEqual(game.check_if_win(game.all_circles), False)
+        self.assertEqual(game.check_if_win_by_coords(game.all_circles), False)
 
+    def test_check_if_win_by_who(self):
+        print("\ntest_check_if_win_by_who")
+        game = main.Game()
+        print(game.all_circles)
+        game.player = "cross"
+        game.mob = "circle"
+        game.all_crosses = [(0, 0), (1, 1), (2, 2)]
+        self.assertEqual(game.check_if_win_by_who("player"), True)
+        game.all_crosses = [(0, 0), (1, 1), (2, 2), (1, 0)]
+        self.assertEqual(game.check_if_win_by_who("player"), True)
+        game.all_crosses = [(0, 0), (1, 1)]
+        self.assertEqual(game.check_if_win_by_who("player"), False)
+        game.all_circles = [(0, 0), (1, 1), (2, 2)]
+        self.assertEqual(game.check_if_win_by_who("mob"), True)
+        game.all_circles = [(0, 0), (1, 1), (2, 2), (1, 0)]
+        self.assertEqual(game.check_if_win_by_who("mob"), True)
+        game.all_circles = [(0, 0), (1, 1)]
+        self.assertEqual(game.check_if_win_by_who("mob"), False)
 
 
 if __name__ == '__main__':
