@@ -10,6 +10,7 @@ from kivy.graphics import Line, Ellipse
 from kivy.factory import Factory
     # uix:
 from kivy.uix.screenmanager import ScreenManager, Screen
+from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.button import Button
 from kivy.uix.popup import Popup
 # mine:
@@ -37,7 +38,7 @@ class Game(Screen):
     game_over = kp.BooleanProperty(False)
     who_is_first = kp.StringProperty("mob")
 
-    def __init__(self):
+    def __init__(self, **kwargs):
         super().__init__()
         self.bind(size=self.draw_lines)
         self.bind(size=self.draw_crosses)
@@ -122,13 +123,16 @@ class Game(Screen):
                 Line(ellipse=self.calc_circle(*circle_coord))
 
     def calc_coord(self, pos_x, pos_y):
+        print("calc_coord(%s, %s)" % (pos_x, pos_y))
         X = self.width
         Y = self.height
         x = X / 3
         y = Y / 3
         coord_x = pos_x // x
         coord_y = pos_y // y
-        return coord_x, coord_y
+        print("X: %s Y: %s, x: %s y: %s, coord_x: %s coord_y: %s" % (X, Y, x, y, coord_x, coord_y))
+        if 0 <= coord_x < 3 and 0 <= coord_y < 3:
+            return coord_x, coord_y
 
     def draw_symbol(self, symbol, new_coord):
         print("\ndraw_symbol(%s, %s)" % (symbol, new_coord))
@@ -162,6 +166,8 @@ class Game(Screen):
 
         # Player:
         new_coord = self.calc_coord(*pos)
+        if not new_coord:
+            return
         print("self.player", self.player)
         if self.draw_symbol(self.player, new_coord):
             return
@@ -212,15 +218,22 @@ class Game(Screen):
         return False
 
 
-class GameApp(App):
+class MetaGame(BoxLayout):
+    pass
 
+
+class GameApp(App):
     def build(self):
-        self.game = Game()
+        self.meta_game = MetaGame()
         Window.size = settings.SIZE
-        print(Window.size)
-        self.game.size = settings.SIZE
-        self.game.draw_lines()
-        return self.game
+        return self.meta_game
+    # def build(self):
+    #     self.meta_game = MetaGame()
+    #     Window.size = settings.SIZE
+    #     print(Window.size)
+    #     self.meta_game.size = settings.SIZE
+    #     self.meta_game.draw_lines()
+    #     return self.meta_game
 
 
 if __name__ == "__main__":

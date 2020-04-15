@@ -51,6 +51,8 @@ class TestStringMethods(unittest.TestCase):
         game.size = (300, 300)
         sol = (0, 0)
         self.assertEqual(game.calc_coord(55, 13), sol)
+        self.assertEqual(game.calc_coord(55, 310), None)
+        self.assertEqual(game.calc_coord(310, 10), None)
 
     def test_calc_next_mob_coord(self):
         game = main.Game()

@@ -1,3 +1,10 @@
 #:kivy 1.10.1
 
-<Game>:
+<MetaGame>:
+    orientation: "vertical"
+    Button:
+        text: "New Game"
+        size_hint_y: 0.1
+        on_press: game.new_game()
+    Game:
+        id: game
